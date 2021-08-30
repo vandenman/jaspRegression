@@ -32,7 +32,7 @@ Form {
 		AssignedVariablesList	{ name: "wlsWeights";	title: qsTr("WLS Weights (optional)");	suggestedColumns: ["scale"];	singleVariable: true	}
 	}
 
-	BayesFactorType {}
+	BayesFactorType { comparedToBestModel: bayesFactorOrderBestModel.checked }
 
 	Group
 	{
@@ -85,8 +85,8 @@ Form {
 	{
 		name: "bayesFactorOrder"
 		title: qsTr("Order")
-		RadioButton { value: "bestModelTop"; label: qsTr("Compare to best model"); checked: true	}
-		RadioButton { value: "nullModelTop"; label: qsTr("Compare to null model")					}
+		RadioButton { value: "bestModelTop"; label: qsTr("Compare to best model"); checked: true; id: bayesFactorOrderBestModel	}
+		RadioButton { value: "nullModelTop"; label: qsTr("Compare to null model")												}
 	}
 
 	RadioButtonGroup

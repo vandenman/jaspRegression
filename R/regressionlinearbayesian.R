@@ -170,9 +170,15 @@ covariate added to the model (Consonni et al., 2018; Wilson et al., 2010).", "\u
 for sparse regression when there are more covariates than observations (Castillo et al., 2015).", "\u03B1", "\u03B2"))
   }
 
-  if (options$bayesFactorType == "BF10")      bfTitle <- gettext("BF<sub>10</sub>")
-  else if (options$bayesFactorType == "BF01") bfTitle <- gettext("BF<sub>01</sub>")
-  else                                        bfTitle <- gettext("Log(BF<sub>10</sub>)")
+  if (options$bayesFactorOrder == "bestModelTop") {
+    if (options$bayesFactorType == "BF10")      bfTitle <- gettext("BF<sub>1B</sub>")
+    else if (options$bayesFactorType == "BF01") bfTitle <- gettext("BF<sub>B1</sub>")
+    else                                        bfTitle <- gettext("Log(BF<sub>1B</sub>)")
+  } else {
+    if (options$bayesFactorType == "BF10")      bfTitle <- gettext("BF<sub>10</sub>")
+    else if (options$bayesFactorType == "BF01") bfTitle <- gettext("BF<sub>01</sub>")
+    else                                        bfTitle <- gettext("Log(BF<sub>10</sub>)")
+  }
 
   modelComparisonTable$addColumnInfo(name = "Models",         type = "string", title = gettext("Models"))
   modelComparisonTable$addColumnInfo(name = "priorProbModel", type = "number", title = gettext("P(M)"))
