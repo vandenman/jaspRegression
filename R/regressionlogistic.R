@@ -367,7 +367,8 @@ RegressionLogisticInternal <- function(jaspResults, dataset = NULL, options, ...
 
         if (options$method == "enter")
           .linregAddPredictorsInModelFootnote(jaspResults[["modelSummary"]],
-                                              options[["modelTerms"]][[midx]][["components"]], midx)
+                                              options[["modelTerms"]][[midx]][["components"]], midx,
+                                              quadraticTerms = FALSE)
         mObj <- glmObj[[midx]]
         if (midx > 1) {
           if (options$method == "forward" ||
