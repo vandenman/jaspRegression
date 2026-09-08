@@ -396,3 +396,12 @@ test_that("Regression coefficient priors use their own parameter", {
     expect_equal(.basregGetPriorParameter("hyper-g-laplace", defaultOptions, n = 100), 3)
     expect_equal(.basregGetPriorParameter("hyper-g-n", defaultOptions, n = 100), 3)
 })
+
+test_that("Model comparison Bayes factor titles identify their reference model", {
+  expect_equal(.getModelComparisonBfTitle("BF10", "nullModelTop"), "\\(\\mathrm{BF}_{10}\\)")
+  expect_equal(.getModelComparisonBfTitle("BF01", "nullModelTop"), "\\(\\mathrm{BF}_{01}\\)")
+  expect_equal(.getModelComparisonBfTitle("LogBF10", "nullModelTop"), "\\(\\log(\\mathrm{BF}_{10})\\)")
+  expect_equal(.getModelComparisonBfTitle("BF10", "bestModelTop"), "\\(\\mathrm{BF}_{1\\mathrm{B}}\\)")
+  expect_equal(.getModelComparisonBfTitle("BF01", "bestModelTop"), "\\(\\mathrm{BF}_{\\mathrm{B}1}\\)")
+  expect_equal(.getModelComparisonBfTitle("LogBF10", "bestModelTop"), "\\(\\log(\\mathrm{BF}_{1\\mathrm{B}})\\)")
+})
