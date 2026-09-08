@@ -1215,22 +1215,9 @@ for sparse regression when there are more covariates than observations (Castillo
   # if neither of these errors occur in a future version then the original function can
   # probably be used again
 
-  if (estimator == "MPM") {
-    formula <- .basregCreateFormula(options$dependent, options$modelTerms)
-    nvar = basregModel$n.vars - 1
-    bestmodel <- (0:nvar)[basregModel$probne0 > 0.5]
-    best = 1
-    models <- rep(0, nvar + 1)
-    models[bestmodel + 1] <- 1
-    if (sum(models) > 1) {
-        basregModel <- BAS::bas.lm(formula = formula, data = dataset,
-                                   weights = weights,
-                                   n.models = 1,
-                                   alpha = basregModel$g, initprobs = basregModel$probne0,
-                                   prior = basregModel$prior, modelprior = basregModel$modelprior,
-                                   update = NULL, bestmodel = models, prob.local = 0)
-    }
-  }
+  if (estimator == "MPM")
+    basregModel <- .basregRefitMedianModel(basregModel, dataset, options, weights)
+
   postprobs = basregModel$postprobs
   if (estimator == "MPM" | estimator == "HPM")
     n.models = 1
@@ -1269,6 +1256,28 @@ for sparse regression when there are more covariates than observations (Castillo
              n.models = n.models, df = df, estimator = estimator)
   class(out) = "coef.bas"
   return(out)
+}
+
+.basregRefitMedianModel <- function(basregModel, dataset, options, weights = NULL) {
+  formula <- .basregCreateFormula(options$dependent, options$modelTerms)
+  nvar <- basregModel$n.vars - 1
+  medianModel <- (0:nvar)[basregModel$probne0 > 0.5]
+  bestmodel <- integer(nvar + 1)
+  bestmodel[medianModel + 1] <- 1
+
+  BAS::bas.lm(
+    formula = formula,
+    data = dataset,
+    weights = weights,
+    n.models = 1,
+    alpha = basregModel$g,
+    initprobs = basregModel$probne0,
+    prior = basregModel$prior,
+    modelprior = basregModel$modelprior,
+    update = NULL,
+    bestmodel = bestmodel,
+    prob.local = 0
+  )
 }
 
 .basregComputePriorMarginalInclusionProbs <- function(basregModel) {
@@ -1362,20 +1371,10 @@ for sparse regression when there are more covariates than observations (Castillo
 
   } else if (options[["summaryType"]] == "median") {
 
-    # We do this for the same reason we need .basregOverwritecoefBas some weird lazy evaluation issues in R.
-    # See also https://github.com/merliseclyde/BAS/issues/56, once that is fixed we can probably remove this
-    weights <- NULL
-    if (options$weights != "") {
-      weightsVar <- options$weights
-      weights <- dataset[[weightsVar]]
-    }
-
-    basregModelTemp <- basregModel
-    basregModelTemp$call$formula <- formula(basregModel$terms)
-    basregModelTemp$call$data    <- dataset
-    basregModelTemp$call$weights <- weights
-
-    predictions <- predict(basregModelTemp, se.fit = userWantsResidualSds, estimator = "MPM")
+    # BAS refits MPM models through lazily evaluated calls that are unreliable
+    # outside the environment where the original model was fitted.
+    basregModelTemp <- .basregRefitMedianModel(basregModel, dataset, options, basregModel[["weights"]])
+    predictions <- predict(basregModelTemp, se.fit = userWantsResidualSds, estimator = "HPM")
 
   } else {
 

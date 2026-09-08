@@ -296,10 +296,13 @@ test_that("Model priors match", {
 test_that("Exporting residuals works", {
 
   data("Hald", package = "BAS")
+  Hald$W <- seq_len(nrow(Hald))
   options <- jaspTools::analysisOptions("RegressionLinearBayesian")
   options$dependent <- "Y"
   options$covariates <- paste0("X", 1:4)
   options$modelTerms <- lapply(options$covariates, function(x) list(components = x, isNuisance = FALSE))
+  options$modelTerms[[1]]$isNuisance <- TRUE
+  options$weights <- "W"
   options$modelPrior <- "betaBinomial"
   options$priorRegressionCoefficients <- "gPrior"
   options$gPriorG <- 13
@@ -329,6 +332,30 @@ test_that("Exporting residuals works", {
 
 }
 
+})
+
+test_that("Refitted median model preserves selection and produces weighted predictions", {
+  data("Hald", package = "BAS")
+  weights <- seq_len(nrow(Hald))
+  basModel <- BAS::bas.lm(
+    Y ~ ., data = Hald, weights = weights, prior = "g-prior", alpha = nrow(Hald),
+    initprobs = c(1, 1, 0.5, 0.5, 0.5)
+  )
+  options <- list(
+    dependent = "Y",
+    modelTerms = lapply(paste0("X", 1:4), function(x) list(component = x))
+  )
+
+  medianModel <- .basregRefitMedianModel(basModel, Hald, options, weights)
+  refittedPredictions <- predict(medianModel, estimator = "HPM", se.fit = TRUE)
+  expectedModel <- (0:(basModel$n.vars - 1))[basModel$probne0 > 0.5]
+
+  expect_equal(medianModel$which[[1]], expectedModel)
+  expect_length(refittedPredictions$fit, nrow(Hald))
+  expect_length(refittedPredictions$se.pred, nrow(Hald))
+  expect_true(all(is.finite(refittedPredictions$fit)))
+  expect_true(all(is.finite(refittedPredictions$se.pred)))
+  expect_true(1 %in% medianModel$which[[1]])
 })
 
 test_that("Regression coefficient priors use their own parameter", {

@@ -21,6 +21,7 @@
 
 ## Fixed
 * Corrected the Logistic Regression assumptions in the help and info text (frequentist and Bayesian). Removed assumptions that do not apply to logistic regression (normality of residuals, homoscedasticity, a linear dependent-variable/predictor relationship) and now state the actual assumptions: binary outcome, independent observations, linearity of the logit in the continuous predictors, and no multicollinearity.
+* Fixed residual export for weighted Bayesian linear regressions using the median-probability model and custom null-model terms.
 
 ---
 
