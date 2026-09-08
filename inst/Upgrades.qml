@@ -177,6 +177,39 @@ Upgrades
 
 	Upgrade
 	{
+		functionName:		"RegressionLinearBayesian"
+		fromVersion:		"0.95"
+		toVersion:			"0.96"
+
+		ChangeRename
+		{
+			condition: function(options) { return options["priorRegressionCoefficients"] === "gPrior"; }
+			from: "gPriorAlpha"
+			to: "gPriorG"
+		}
+		ChangeRename
+		{
+			condition: function(options) { return options["priorRegressionCoefficients"] === "hyperG"; }
+			from: "gPriorAlpha"
+			to: "hyperGAlpha"
+		}
+		ChangeRename
+		{
+			condition: function(options) { return options["priorRegressionCoefficients"] === "hyperGLaplace"; }
+			from: "gPriorAlpha"
+			to: "hyperGLaplaceAlpha"
+		}
+		ChangeRename
+		{
+			condition: function(options) { return options["priorRegressionCoefficients"] === "hyperGN"; }
+			from: "gPriorAlpha"
+			to: "hyperGNAlpha"
+		}
+		ChangeRemove { name: "gPriorAlpha" }
+	}
+
+	Upgrade
+	{
 		functionName:		"CorrelationBayesian"
 		fromVersion:		"0.16.3"
 		toVersion:			"0.16.4"

@@ -53,7 +53,7 @@ Compares each model against the model selected.
   - BIC: Compare models using the Bayesian Information Criterion.
   - EB-global: Global Empirical Bayes estimates of g in Zellner-Siow g-prior and model probabilities. Uses an EM algorithm to find a common or global estimate of g, averaged over all models. When it is not possible to enumerate all models, the EM algorithm uses only the models sampled under EB-local.
   - EB-local: Uses the MLE of g from the marginal likelihood within each model.
-  - g-prior: Zellner's g-prior.
+  - g-prior: Zellner's g-prior. By default, g is set to n, corresponding to the unit-information prior.
   - Hyper-g: A mixture of g-priors where the prior on g/(1+g) is a Beta(1, alpha/2) as in Liang et al (2008). This uses the Cephes library for evaluation of the marginal likelihoods and may be numerically unstable for large n or R2 close to 1. Default choice of alpha is 3
   - Hyper-g-Laplace:  Same as *Hyper-g* but uses a Laplace approximation to integrate over the prior on g.
   - Hyper-g-n: A mixture of g-priors that where u = g/n and u  Beta(1, alpha/2) to provide consistency when the null model is true.

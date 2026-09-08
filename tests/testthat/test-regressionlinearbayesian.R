@@ -302,7 +302,7 @@ test_that("Exporting residuals works", {
   options$modelTerms <- lapply(options$covariates, function(x) list(components = x, isNuisance = FALSE))
   options$modelPrior <- "betaBinomial"
   options$priorRegressionCoefficients <- "gPrior"
-  options$gPriorAlpha <- 13
+  options$gPriorG <- 13
   options$residualsSavedToData   <- TRUE
   options$residualSdsSavedToData <- TRUE
 
@@ -329,4 +329,43 @@ test_that("Exporting residuals works", {
 
 }
 
+})
+
+test_that("Regression coefficient priors use their own parameter", {
+    options <- list(
+        gPriorG = 13,
+        hyperGAlpha = 2.5,
+        hyperGLaplaceAlpha = 3,
+        hyperGNAlpha = 3.5,
+        jzsRScale = 0.5
+    )
+
+    expect_equal(.basregGetPriorParameter("g-prior", options, n = 100), 13)
+    expect_equal(.basregGetPriorParameter("hyper-g", options, n = 100), 2.5)
+    expect_equal(.basregGetPriorParameter("hyper-g-laplace", options, n = 100), 3)
+    expect_equal(.basregGetPriorParameter("hyper-g-n", options, n = 100), 3.5)
+    expect_equal(.basregGetPriorParameter("JZS", options, n = 100), 0.25)
+
+    options$gPriorG <- NULL
+    expect_equal(.basregGetPriorParameter("g-prior", options, n = 100), 100)
+
+    options$hyperGAlpha <- 3.75
+    expect_equal(.basregGetPriorParameter("g-prior", options, n = 100), 100)
+
+    legacyOptions <- list(gPriorAlpha = 13, jzsRScale = 0.5)
+    expect_equal(.basregGetPriorParameter("g-prior", legacyOptions, n = 100), 13)
+    expect_equal(.basregGetPriorParameter("hyper-g", legacyOptions, n = 100), 13)
+    expect_equal(.basregGetPriorParameter("hyper-g-laplace", legacyOptions, n = 100), 13)
+    expect_equal(.basregGetPriorParameter("hyper-g-n", legacyOptions, n = 100), 13)
+
+    legacyOptions$gPriorG <- 25
+    legacyOptions$hyperGAlpha <- 2.5
+    expect_equal(.basregGetPriorParameter("g-prior", legacyOptions, n = 100), 25)
+    expect_equal(.basregGetPriorParameter("hyper-g", legacyOptions, n = 100), 2.5)
+
+    defaultOptions <- list(jzsRScale = 0.5)
+    expect_equal(.basregGetPriorParameter("g-prior", defaultOptions, n = 100), 100)
+    expect_equal(.basregGetPriorParameter("hyper-g", defaultOptions, n = 100), 3)
+    expect_equal(.basregGetPriorParameter("hyper-g-laplace", defaultOptions, n = 100), 3)
+    expect_equal(.basregGetPriorParameter("hyper-g-n", defaultOptions, n = 100), 3)
 })

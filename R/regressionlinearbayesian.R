@@ -110,7 +110,7 @@ RegressionLinearBayesianInternal <- function(jaspResults, dataset = NULL, option
     basregContainer$position <- position
     basregContainer$dependOn(c(
       "dependent", "covariates", "weights", "modelTerms",
-      "priorRegressionCoefficients", "gPriorAlpha", "jzsRScale",
+      "priorRegressionCoefficients", "gPriorG", "hyperGAlpha", "hyperGLaplaceAlpha", "hyperGNAlpha", "gPriorAlpha", "jzsRScale",
       "modelPrior", "betaBinomialParamA", "betaBinomialParamB", "bernoulliParam",
       "wilsonParamLambda", "castilloParamU",
       "samplingMethod", "samples", "numberOfModels", "seed", "setSeed"
@@ -1043,16 +1043,7 @@ for sparse regression when there are more covariates than observations (Castillo
     "jzs"           = "JZS"
   )
 
-  # parameter for hyper-g's or jzs (all use same alpha param in bas.lm)
-  alpha <- switch(
-    prior,
-    "g-prior"         = options$gPriorAlpha,
-    "hyper-g"         = options$gPriorAlpha,
-    "hyper-g-laplace" = options$gPriorAlpha,
-    "hyper-g-n"       = options$gPriorAlpha,
-    "JZS"             = options$jzsRScale^2,
-    NULL
-  )
+  alpha <- .basregGetPriorParameter(prior, options, nrow(dataset))
 
   # Bayesian Adaptive Sampling
   .setSeedJASP(options)
@@ -1090,6 +1081,25 @@ for sparse regression when there are more covariates than observations (Castillo
   basregContainer[["basregModel"]] <- createJaspState(bas_lm)
 
   return(bas_lm)
+}
+
+.basregGetPriorParameter <- function(prior, options, n) {
+  legacyAlpha <- options$gPriorAlpha
+  priorParameter <- function(value, default) {
+    if (!is.null(value)) value else if (!is.null(legacyAlpha)) legacyAlpha else default
+  }
+
+  if (prior == "g-prior")
+    return(priorParameter(options$gPriorG, n))
+
+  switch(
+    prior,
+    "hyper-g"         = priorParameter(options$hyperGAlpha, 3),
+    "hyper-g-laplace" = priorParameter(options$hyperGLaplaceAlpha, 3),
+    "hyper-g-n"       = priorParameter(options$hyperGNAlpha, 3),
+    "JZS"             = options$jzsRScale^2,
+    NULL
+  )
 }
 
 .basregCreateFormula <- function(dependent, modelTerms) {

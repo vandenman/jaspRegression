@@ -187,22 +187,37 @@ Form {
 			{
 				rowSpacing: jaspTheme.rowGroupSpacing
 				columnSpacing: 0
-				Group
+				RadioButton
 				{
-					RadioButton { value: "gPrior";			label: qsTr("g-prior"); info: qsTr("Zellner's g-prior.")	;			id: gprior			}
-					RadioButton { value: "hyperG";			label: qsTr("Hyper-g"); info: qsTr("A mixture of g-priors where the prior on g/(1+g) is a Beta(1, alpha/2). This uses the Cephes library for evaluation of the marginal likelihoods and may be numerically unstable for large n or R2 close to 1. Default choice of alpha is 3.")	;			id: hyperg			}
-					RadioButton { value: "hyperGLaplace";	label: qsTr("Hyper-g-Laplace"); info: qsTr("Same as Hyper-g but uses a Laplace approximation to integrate over the prior on g.")	;	id: hyperglaplace	}
-					RadioButton { value: "hyperGN";			label: qsTr("Hyper-g-n"); info: qsTr("A mixture of g-priors where u = g/n and u Beta(1, alpha/2) to provide consistency when the null model is true.")	;		id: hypergn			}
+					value: "gPrior"
+					label: qsTr("g-prior")
+					info: qsTr("Zellner's g-prior. The default g = n is the unit-information prior.")
+					childrenOnSameRow: true
+					DoubleField { name: "gPriorG"; label: qsTr("g"); defaultValue: dataSetInfo.dataAvailable ? dataSetInfo.rowCount : 1; min: 0; inclusive: JASP.None }
 				}
-				DoubleField
+				RadioButton
 				{
-					name: "gPriorAlpha"
-					label: qsTr("alpha")
-					enabled: gprior.checked || hyperg.checked || hyperglaplace.checked || hypergn.checked
-					defaultValue: 3.0
-					min: 2
-					max: 4
-					inclusive: JASP.None
+					value: "hyperG"
+					label: qsTr("Hyper-g")
+					info: qsTr("A mixture of g-priors where the prior on g/(1+g) is a Beta(1, alpha/2). This uses the Cephes library for evaluation of the marginal likelihoods and may be numerically unstable for large n or R2 close to 1. Default choice of alpha is 3.")
+					childrenOnSameRow: true
+					DoubleField { name: "hyperGAlpha"; label: qsTr("alpha"); defaultValue: 3.0; min: 2; inclusive: JASP.None }
+				}
+				RadioButton
+				{
+					value: "hyperGLaplace"
+					label: qsTr("Hyper-g-Laplace")
+					info: qsTr("Same as Hyper-g but uses a Laplace approximation to integrate over the prior on g.")
+					childrenOnSameRow: true
+					DoubleField { name: "hyperGLaplaceAlpha"; label: qsTr("alpha"); defaultValue: 3.0; min: 2; inclusive: JASP.None }
+				}
+				RadioButton
+				{
+					value: "hyperGN"
+					label: qsTr("Hyper-g-n")
+					info: qsTr("A mixture of g-priors where u = g/n and u Beta(1, alpha/2) to provide consistency when the null model is true.")
+					childrenOnSameRow: true
+					DoubleField { name: "hyperGNAlpha"; label: qsTr("alpha"); defaultValue: 3.0; min: 2; inclusive: JASP.None }
 				}
 				RadioButton { value: "jzs"; label: qsTr("JZS"); info: qsTr("Jeffreys-Zellner-Siow prior which uses the Jeffreys prior on sigma and the Zellner-Siow Cauchy prior on the coefficients. The optional parameter can be used to control the squared scale of the prior.") ; checked: true; id: jzs }
 				DoubleField
