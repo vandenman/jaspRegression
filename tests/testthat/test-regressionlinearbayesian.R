@@ -138,6 +138,8 @@ test_that("Coefficient plots match", {
     options$inclusionProbabilitiesPlot <- TRUE
     options$marginalPosteriorPlot <- TRUE
     options$posteriorSummaryPlotWithoutIntercept <- FALSE
+    options$residualsSavedToData <- FALSE
+    options$residualSdsSavedToData <- FALSE
 
     results <- jaspTools::runAnalysis("RegressionLinearBayesian", "test.csv", options)
 
