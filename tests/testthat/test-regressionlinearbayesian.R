@@ -346,7 +346,7 @@ test_that("Refitted median model preserves selection and produces weighted predi
     modelTerms = lapply(paste0("X", 1:4), function(x) list(component = x))
   )
 
-  medianModel <- .basregRefitMedianModel(basModel, Hald, options, weights)
+  medianModel <- jaspRegression:::.basregRefitMedianModel(basModel, Hald, options, weights)
   refittedPredictions <- predict(medianModel, estimator = "HPM", se.fit = TRUE)
   expectedModel <- (0:(basModel$n.vars - 1))[basModel$probne0 > 0.5]
 
@@ -367,41 +367,41 @@ test_that("Regression coefficient priors use their own parameter", {
         jzsRScale = 0.5
     )
 
-    expect_equal(.basregGetPriorParameter("g-prior", options, n = 100), 13)
-    expect_equal(.basregGetPriorParameter("hyper-g", options, n = 100), 2.5)
-    expect_equal(.basregGetPriorParameter("hyper-g-laplace", options, n = 100), 3)
-    expect_equal(.basregGetPriorParameter("hyper-g-n", options, n = 100), 3.5)
-    expect_equal(.basregGetPriorParameter("JZS", options, n = 100), 0.25)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("g-prior", options, n = 100), 13)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g", options, n = 100), 2.5)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g-laplace", options, n = 100), 3)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g-n", options, n = 100), 3.5)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("JZS", options, n = 100), 0.25)
 
     options$gPriorG <- NULL
-    expect_equal(.basregGetPriorParameter("g-prior", options, n = 100), 100)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("g-prior", options, n = 100), 100)
 
     options$hyperGAlpha <- 3.75
-    expect_equal(.basregGetPriorParameter("g-prior", options, n = 100), 100)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("g-prior", options, n = 100), 100)
 
     legacyOptions <- list(gPriorAlpha = 13, jzsRScale = 0.5)
-    expect_equal(.basregGetPriorParameter("g-prior", legacyOptions, n = 100), 13)
-    expect_equal(.basregGetPriorParameter("hyper-g", legacyOptions, n = 100), 13)
-    expect_equal(.basregGetPriorParameter("hyper-g-laplace", legacyOptions, n = 100), 13)
-    expect_equal(.basregGetPriorParameter("hyper-g-n", legacyOptions, n = 100), 13)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("g-prior", legacyOptions, n = 100), 13)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g", legacyOptions, n = 100), 13)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g-laplace", legacyOptions, n = 100), 13)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g-n", legacyOptions, n = 100), 13)
 
     legacyOptions$gPriorG <- 25
     legacyOptions$hyperGAlpha <- 2.5
-    expect_equal(.basregGetPriorParameter("g-prior", legacyOptions, n = 100), 25)
-    expect_equal(.basregGetPriorParameter("hyper-g", legacyOptions, n = 100), 2.5)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("g-prior", legacyOptions, n = 100), 25)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g", legacyOptions, n = 100), 2.5)
 
     defaultOptions <- list(jzsRScale = 0.5)
-    expect_equal(.basregGetPriorParameter("g-prior", defaultOptions, n = 100), 100)
-    expect_equal(.basregGetPriorParameter("hyper-g", defaultOptions, n = 100), 3)
-    expect_equal(.basregGetPriorParameter("hyper-g-laplace", defaultOptions, n = 100), 3)
-    expect_equal(.basregGetPriorParameter("hyper-g-n", defaultOptions, n = 100), 3)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("g-prior", defaultOptions, n = 100), 100)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g", defaultOptions, n = 100), 3)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g-laplace", defaultOptions, n = 100), 3)
+    expect_equal(jaspRegression:::.basregGetPriorParameter("hyper-g-n", defaultOptions, n = 100), 3)
 })
 
 test_that("Model comparison Bayes factor titles identify their reference model", {
-  expect_equal(.getModelComparisonBfTitle("BF10", "nullModelTop"), "\\(\\mathrm{BF}_{10}\\)")
-  expect_equal(.getModelComparisonBfTitle("BF01", "nullModelTop"), "\\(\\mathrm{BF}_{01}\\)")
-  expect_equal(.getModelComparisonBfTitle("LogBF10", "nullModelTop"), "\\(\\log(\\mathrm{BF}_{10})\\)")
-  expect_equal(.getModelComparisonBfTitle("BF10", "bestModelTop"), "\\(\\mathrm{BF}_{1\\mathrm{B}}\\)")
-  expect_equal(.getModelComparisonBfTitle("BF01", "bestModelTop"), "\\(\\mathrm{BF}_{\\mathrm{B}1}\\)")
-  expect_equal(.getModelComparisonBfTitle("LogBF10", "bestModelTop"), "\\(\\log(\\mathrm{BF}_{1\\mathrm{B}})\\)")
+  expect_equal(jaspRegression:::.getModelComparisonBfTitle("BF10", "nullModelTop"), "\\(\\mathrm{BF}_{10}\\)")
+  expect_equal(jaspRegression:::.getModelComparisonBfTitle("BF01", "nullModelTop"), "\\(\\mathrm{BF}_{01}\\)")
+  expect_equal(jaspRegression:::.getModelComparisonBfTitle("LogBF10", "nullModelTop"), "\\(\\log(\\mathrm{BF}_{10})\\)")
+  expect_equal(jaspRegression:::.getModelComparisonBfTitle("BF10", "bestModelTop"), "\\(\\mathrm{BF}_{1\\mathrm{B}}\\)")
+  expect_equal(jaspRegression:::.getModelComparisonBfTitle("BF01", "bestModelTop"), "\\(\\mathrm{BF}_{\\mathrm{B}1}\\)")
+  expect_equal(jaspRegression:::.getModelComparisonBfTitle("LogBF10", "bestModelTop"), "\\(\\log(\\mathrm{BF}_{1\\mathrm{B}})\\)")
 })
