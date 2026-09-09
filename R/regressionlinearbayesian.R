@@ -820,7 +820,7 @@ for sparse regression when there are more covariates than observations (Castillo
   i  <- index
 
   sel      <- x$conditionalmeans[, i] != 0
-  prob0    <- 1 - x$probne0[i]
+  prob0    <- min(1, max(0, 1 - x$probne0[i]))
   mixprobs <- x$postprobs[sel]/(1 - prob0)
   means    <- x$conditionalmeans[sel, i, drop = TRUE]
   sds      <- x$conditionalsd[sel, i, drop = TRUE]
