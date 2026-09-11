@@ -1025,16 +1025,7 @@ for sparse regression when there are more covariates than observations (Castillo
   }
 
   # select the type of model prior
-  if (options$modelPrior == "betaBinomial")
-    modelPrior <- BAS::beta.binomial(as.numeric(options$betaBinomialParamA), as.numeric(options$betaBinomialParamB))
-  else if (options$modelPrior == "uniform")
-    modelPrior <- BAS::uniform()
-  else if (options$modelPrior == "bernoulli")
-    modelPrior <- BAS::Bernoulli(options$bernoulliParam)
-  else if (options$modelPrior == "wilson")
-    modelPrior <- BAS::beta.binomial(1.0, as.numeric(nPreds * options$wilsonParamLambda))
-  else if (options$modelPrior == "castillo")
-    modelPrior <- BAS::beta.binomial(1.0, as.numeric(nPreds ^ options$castilloParamU))
+  modelPrior <- .basregGetModelPrior(options)
 
   # number of models
   n.models <- NULL
